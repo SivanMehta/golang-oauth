@@ -3,6 +3,7 @@
 *.dll
 *.so
 *.dylib
+golang-oauth
 
 # Test binary, build with `go test -c`
 *.test
