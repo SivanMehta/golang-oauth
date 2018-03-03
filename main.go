@@ -11,14 +11,14 @@ import (
 // constants
 var (
   defaultLayout = "templates/layout.html"
-	templateDir = "templates/"
+  templateDir = "templates/"
 
   tmpls = map[string]*template.Template{}
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
   log.Println("Serve home route")
-	tmpls["home.html"].ExecuteTemplate(w, "base", map[string]interface{}{})
+  tmpls["home.html"].ExecuteTemplate(w, "base", map[string]interface{}{})
 }
 
 func main () {
@@ -28,9 +28,9 @@ func main () {
   r.HandleFunc("/", HomeHandler)
   http.Handle("/", r)
   port := os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "3000"
-	}
+  if len(port) == 0 {
+    port = "3000"
+  }
 
   log.Fatalln(http.ListenAndServe(":" + port, nil))
 }
