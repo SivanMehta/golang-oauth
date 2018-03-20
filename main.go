@@ -11,6 +11,7 @@ import (
   "net/http"
   "html/template"
   "os"
+  "bytes"
 
   "crypto/rand"
   "encoding/base64"
@@ -69,7 +70,16 @@ func StartHandler(w http.ResponseWriter, r *http.Request) {
   session.Values["state"] = state
   session.Save(r, w)
 
-  url := oauthCfg.AuthCodeURL(state)
+
+  // form OAuth url from config files
+  var buffer bytes.Buffer
+  buffer.WriteString("https://github.com/login/oauth/authorize?")
+  buffer.WriteString("client_id=")
+  buffer.WriteString(cfg.ClientID)
+  buffer.WriteString("&state=")
+  buffer.WriteString(state)
+  url := buffer.String()
+
   http.Redirect(w, r, url, 302)
 }
 
