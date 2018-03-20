@@ -1,4 +1,4 @@
-server: install build run
+server: install build serve
 
 install:
 	go get github.com/gorilla/mux
@@ -7,7 +7,7 @@ install:
 build:
 	go build
 
-run:
+serve:
 	./golang-oauth
 
-dev: build run
+dev: build serve
