@@ -6,7 +6,7 @@ example but we'll see how far this goes
 
 # Getting started
 
-The is the first time I'm using a `Makefile` to do anything, so IDK if it's correct at all
+The is the first time I'm using a `Makefile` to do anything, so IDK if it's correct at all. You will need a `config.json` with the correct credentials. I have included an example (with fake credentials), in `config.example.json`
 
 ## `make install`
 
