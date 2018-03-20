@@ -13,3 +13,6 @@ golang-oauth
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+
+# configuration, including oauth tokens
+config.json

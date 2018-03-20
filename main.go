@@ -14,21 +14,45 @@ import (
 
   "crypto/rand"
   "encoding/base64"
+  "encoding/json"
+  "io/ioutil"
 )
+
+type Config struct {
+	ClientSecret string `json:"clientSecret"`
+	ClientID     string `json:"clientID"`
+	Secret       string `json:"secret"`
+}
 
 // constants
 var (
+  cfg *Config
   defaultLayout = "templates/layout.html"
   templateDir = "templates/"
-
   tmpls = map[string]*template.Template{}
+
+  defaultConfigFile = "config.json"
 
   store *sessions.CookieStore
 
 	oauthCfg *oauth2.Config
 )
 
+func loadConfig(file string) (*Config, error) {
+  var config Config
 
+
+  b, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(b, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
   log.Println("Serve home route")
@@ -36,7 +60,6 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StartHandler(w http.ResponseWriter, r *http.Request) {
-
   b := make([]byte, 16)
   rand.Read(b)
   session, _ := store.Get(r, "sess")
@@ -93,6 +116,13 @@ func main () {
   tmpls["home.html"] = template.Must(template.ParseFiles(templateDir + "home.html", defaultLayout))
 
   store = sessions.NewCookieStore([]byte("sess"))
+
+  var err error
+	cfg, err = loadConfig(defaultConfigFile)
+	if err != nil {
+    fmt.Println(err)
+		panic(err)
+	}
 
   r := mux.NewRouter()
   r.HandleFunc("/", HomeHandler)
