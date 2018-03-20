@@ -65,11 +65,12 @@ func StartHandler(w http.ResponseWriter, r *http.Request) {
   session, _ := store.Get(r, "sess")
 
   state := base64.URLEncoding.EncodeToString(b)
-  log.Println("Serve start route with state", state)
+  log.Println("Serve start route with auth code", state)
   session.Values["state"] = state
   session.Save(r, w)
 
-  http.Redirect(w, r, "/", 302)
+  url := oauthCfg.AuthCodeURL(state)
+  http.Redirect(w, r, url, 302)
 }
 
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
