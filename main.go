@@ -24,17 +24,20 @@ type Config struct {
 // constants
 var (
   cfg *Config
+  store *sessions.CookieStore
+  oauthCfg *oauth2.Config
+  tmpls = map[string]*template.Template{}
+)
+
+const (
   defaultLayout = "templates/layout.html"
   templateDir = "templates/"
-  tmpls = map[string]*template.Template{}
 
   defaultConfigFile = "config/config.json"
   defaultServerCrt = "config/server.crt"
   defaultServerKey = "config/server.key"
 
-  store *sessions.CookieStore
-
-	oauthCfg *oauth2.Config
+  sessionName = "sess"
 )
 
 func loadConfig(file string) (*Config, error) {
@@ -69,7 +72,7 @@ func main () {
   r.HandleFunc("/", HomeHandler)
   r.HandleFunc("/start", StartHandler)
   r.HandleFunc("/auth", AuthHandler)
-  // r.HandleFunc("/secure", SecureHandler)
+  r.HandleFunc("/secure", SecureHandler)
 
   http.Handle("/", r)
   port := os.Getenv("PORT")
