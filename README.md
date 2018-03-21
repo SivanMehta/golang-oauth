@@ -1,12 +1,12 @@
 # golang-oauth
 Seeing if I can make a basic web app that requires login with GitHub
 
-started based off [this](https://github.com/andrewtian/golang-github-oauth-example/blob/master/main.go) 
+started based off [this](https://github.com/andrewtian/golang-github-oauth-example/blob/master/main.go)
 example but we'll see how far this goes
 
 # Getting started
 
-The is the first time I'm using a `Makefile` to do anything, so IDK if it's correct at all. You will need a `config.json` with the correct credentials. I have included an example (with fake credentials), in `config.example.json`
+The is the first time I'm using a `Makefile` to do anything, so IDK if it's correct at all. You will need a `config.json` with the correct credentials. I have included an example (with fake credentials), in `config/config.example.json`
 
 ## `make install`
 
