@@ -3,8 +3,9 @@ package main
 import (
   "github.com/gorilla/mux"
   "github.com/gorilla/sessions"
-  "golang.org/x/oauth2"
   "github.com/google/go-github/github"
+  "golang.org/x/net/context"
+  "golang.org/x/oauth2"
 
   "log"
   "fmt"
@@ -59,6 +60,8 @@ func loadConfig(file string) (*Config, error) {
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
   log.Println("Serve home route")
+  session, _ := store.Get(r, "sess")
+  log.Println(session.Values["repos"])
   tmpls["home.html"].ExecuteTemplate(w, "base", map[string]interface{}{})
 }
 
@@ -97,32 +100,23 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  tkn, err := oauthCfg.Exchange(oauth2.NoContext, r.URL.Query().Get("code"))
-  if err != nil {
-    fmt.Fprintln(w, "there was an issue getting your token")
-    return
-  }
+  tkn := r.URL.Query().Get("code")
 
-  if !tkn.Valid() {
-		fmt.Fprintln(w, "retreived invalid token")
-		return
-	}
+  ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: tkn},
+	)
+	tc := oauth2.NewClient(ctx, ts)
 
-  client := github.NewClient(oauthCfg.Client(oauth2.NoContext, tkn))
-  ctx := r.Context()
+  client := github.NewClient(tc)
 
-  user, _,  err := client.Users.Get(ctx, "")
-	if err != nil {
-		fmt.Println(w, "error getting name")
-		return
-	}
+	repos, _, err := client.Repositories.List(ctx, "", nil)
 
-  session.Values["name"] = user.Name
-  session.Values["accessToken"] = tkn.AccessToken
+  session.Values["repos"] = repos
+  session.Values["accessToken"] = tkn
   session.Save(r, w)
 
   http.Redirect(w, r, "/", 302)
-
 }
 
 func main () {
