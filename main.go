@@ -32,7 +32,9 @@ var (
   templateDir = "templates/"
   tmpls = map[string]*template.Template{}
 
-  defaultConfigFile = "config.json"
+  defaultConfigFile = "config/config.json"
+  defaultServerCrt = "config/server.crt"
+  defaultServerKey = "config/server.key"
 
   store *sessions.CookieStore
 
@@ -143,9 +145,12 @@ func main () {
   http.Handle("/", r)
   port := os.Getenv("PORT")
   if len(port) == 0 {
-    port = "3000"
+    port = ":3000"
   }
 
-  log.Println("Listening on port 3000")
-  log.Fatalln(http.ListenAndServe(":" + port, nil))
+  log.Println("Listening on ", port)
+  err = http.ListenAndServeTLS(port, defaultServerCrt, defaultServerKey, nil)
+  if err != nil {
+      log.Fatal("ListenAndServe: ", err)
+  }
 }
